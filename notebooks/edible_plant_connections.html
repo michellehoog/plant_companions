@@ -1,0 +1,216 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 1000;
+            height: 500px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 1000;
+            height: 500px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+        #config {
+            float: left;
+            width: 400px;
+            height: 600px;
+        }
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<div id = "config"></div>
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"id": "AUB", "label": "AUB", "shape": "dot", "size": 10}, {"id": "PEP", "label": "PEP", "shape": "dot", "size": 10}, {"id": "MAR2", "label": "MAR2", "shape": "dot", "size": 10}, {"id": "TAR", "label": "TAR", "shape": "dot", "size": 10}, {"id": "CAT", "label": "CAT", "shape": "dot", "size": 10}, {"id": "BEA3", "label": "BEA3", "shape": "dot", "size": 10}, {"id": "BAS", "label": "BAS", "shape": "dot", "size": 10}, {"id": "LET1", "label": "LET1", "shape": "dot", "size": 10}, {"id": "PUR", "label": "PUR", "shape": "dot", "size": 10}, {"id": "TOM1", "label": "TOM1", "shape": "dot", "size": 10}, {"id": "LET2", "label": "LET2", "shape": "dot", "size": 10}, {"id": "TOM2", "label": "TOM2", "shape": "dot", "size": 10}, {"id": "BEA1", "label": "BEA1", "shape": "dot", "size": 10}, {"id": "", "label": "", "shape": "dot", "size": 10}, {"id": "CAB3", "label": "CAB3", "shape": "dot", "size": 10}, {"id": "CAL", "label": "CAL", "shape": "dot", "size": 10}, {"id": "CAR", "label": "CAR", "shape": "dot", "size": 10}, {"id": "NAS", "label": "NAS", "shape": "dot", "size": 10}, {"id": "LOV", "label": "LOV", "shape": "dot", "size": 10}, {"id": "SWE1", "label": "SWE1", "shape": "dot", "size": 10}, {"id": "CEL", "label": "CEL", "shape": "dot", "size": 10}, {"id": "POT1", "label": "POT1", "shape": "dot", "size": 10}, {"id": "CAU", "label": "CAU", "shape": "dot", "size": 10}, {"id": "CAB7", "label": "CAB7", "shape": "dot", "size": 10}, {"id": "BRU", "label": "BRU", "shape": "dot", "size": 10}, {"id": "BRO", "label": "BRO", "shape": "dot", "size": 10}, {"id": "SQU2", "label": "SQU2", "shape": "dot", "size": 10}, {"id": "SQU", "label": "SQU", "shape": "dot", "size": 10}, {"id": "SUN", "label": "SUN", "shape": "dot", "size": 10}, {"id": "ROS", "label": "ROS", "shape": "dot", "size": 10}, {"id": "BEA2", "label": "BEA2", "shape": "dot", "size": 10}, {"id": "POT2", "label": "POT2", "shape": "dot", "size": 10}, {"id": "STR", "label": "STR", "shape": "dot", "size": 10}, {"id": "BEE", "label": "BEE", "shape": "dot", "size": 10}, {"id": "CAB1", "label": "CAB1", "shape": "dot", "size": 10}, {"id": "ONI5", "label": "ONI5", "shape": "dot", "size": 10}, {"id": "CAB6", "label": "CAB6", "shape": "dot", "size": 10}, {"id": "ONI4", "label": "ONI4", "shape": "dot", "size": 10}, {"id": "CAB5", "label": "CAB5", "shape": "dot", "size": 10}, {"id": "ONI", "label": "ONI", "shape": "dot", "size": 10}, {"id": "CAB2", "label": "CAB2", "shape": "dot", "size": 10}, {"id": "ORE", "label": "ORE", "shape": "dot", "size": 10}, {"id": "CHI2", "label": "CHI2", "shape": "dot", "size": 10}, {"id": "GAR", "label": "GAR", "shape": "dot", "size": 10}, {"id": "SAL", "label": "SAL", "shape": "dot", "size": 10}, {"id": "BUC", "label": "BUC", "shape": "dot", "size": 10}, {"id": "SAG", "label": "SAG", "shape": "dot", "size": 10}, {"id": "MIN", "label": "MIN", "shape": "dot", "size": 10}, {"id": "DIL", "label": "DIL", "shape": "dot", "size": 10}, {"id": "ONI3", "label": "ONI3", "shape": "dot", "size": 10}, {"id": "CAL2", "label": "CAL2", "shape": "dot", "size": 10}, {"id": "AGA\u2002", "label": "AGA\u2002", "shape": "dot", "size": 10}, {"id": "CHA", "label": "CHA", "shape": "dot", "size": 10}, {"id": "AGA", "label": "AGA", "shape": "dot", "size": 10}, {"id": "THY", "label": "THY", "shape": "dot", "size": 10}, {"id": "MAN", "label": "MAN", "shape": "dot", "size": 10}, {"id": "CHI3", "label": "CHI3", "shape": "dot", "size": 10}, {"id": "LEE", "label": "LEE", "shape": "dot", "size": 10}, {"id": "PEA", "label": "PEA", "shape": "dot", "size": 10}, {"id": "COU", "label": "COU", "shape": "dot", "size": 10}, {"id": "ZIN", "label": "ZIN", "shape": "dot", "size": 10}, {"id": "CUC", "label": "CUC", "shape": "dot", "size": 10}, {"id": "TAN", "label": "TAN", "shape": "dot", "size": 10}, {"id": "BOR", "label": "BOR", "shape": "dot", "size": 10}, {"id": "RAD", "label": "RAD", "shape": "dot", "size": 10}, {"id": "PEA6", "label": "PEA6", "shape": "dot", "size": 10}, {"id": "PEA4", "label": "PEA4", "shape": "dot", "size": 10}, {"id": "PEA9", "label": "PEA9", "shape": "dot", "size": 10}, {"id": "PLU2", "label": "PLU2", "shape": "dot", "size": 10}, {"id": "RAS", "label": "RAS", "shape": "dot", "size": 10}, {"id": "GOO", "label": "GOO", "shape": "dot", "size": 10}, {"id": "CHE2", "label": "CHE2", "shape": "dot", "size": 10}, {"id": "CHE1", "label": "CHE1", "shape": "dot", "size": 10}, {"id": "APR1", "label": "APR1", "shape": "dot", "size": 10}, {"id": "CHE3", "label": "CHE3", "shape": "dot", "size": 10}, {"id": "PLU1", "label": "PLU1", "shape": "dot", "size": 10}, {"id": "PLU3", "label": "PLU3", "shape": "dot", "size": 10}, {"id": "APR2", "label": "APR2", "shape": "dot", "size": 10}, {"id": "APP3", "label": "APP3", "shape": "dot", "size": 10}, {"id": "PEA7", "label": "PEA7", "shape": "dot", "size": 10}, {"id": "PEA5", "label": "PEA5", "shape": "dot", "size": 10}, {"id": "APP2", "label": "APP2", "shape": "dot", "size": 10}, {"id": "APP1", "label": "APP1", "shape": "dot", "size": 10}, {"id": "RED", "label": "RED", "shape": "dot", "size": 10}, {"id": "PEA8", "label": "PEA8", "shape": "dot", "size": 10}, {"id": "APP4", "label": "APP4", "shape": "dot", "size": 10}, {"id": "HER", "label": "HER", "shape": "dot", "size": 10}, {"id": "KAL", "label": "KAL", "shape": "dot", "size": 10}, {"id": "SPI", "label": "SPI", "shape": "dot", "size": 10}, {"id": "POA", "label": "POA", "shape": "dot", "size": 10}, {"id": "SPR", "label": "SPR", "shape": "dot", "size": 10}, {"id": "ASP", "label": "ASP", "shape": "dot", "size": 10}, {"id": "MON", "label": "MON", "shape": "dot", "size": 10}, {"id": "PAR2", "label": "PAR2", "shape": "dot", "size": 10}, {"id": "OTH1", "label": "OTH1", "shape": "dot", "size": 10}, {"id": "OTH2", "label": "OTH2", "shape": "dot", "size": 10}, {"id": "OTH3", "label": "OTH3", "shape": "dot", "size": 10}, {"id": "PAR", "label": "PAR", "shape": "dot", "size": 10}, {"id": "TUR", "label": "TUR", "shape": "dot", "size": 10}, {"id": "ALY", "label": "ALY", "shape": "dot", "size": 10}, {"id": "MAJ", "label": "MAJ", "shape": "dot", "size": 10}, {"id": "COR3", "label": "COR3", "shape": "dot", "size": 10}, {"id": "HOR", "label": "HOR", "shape": "dot", "size": 10}, {"id": "RHU", "label": "RHU", "shape": "dot", "size": 10}, {"id": "ROC", "label": "ROC", "shape": "dot", "size": 10}, {"id": "LEM", "label": "LEM", "shape": "dot", "size": 10}, {"id": "NIG", "label": "NIG", "shape": "dot", "size": 10}, {"id": "SWE", "label": "SWE", "shape": "dot", "size": 10}, {"id": "SWI", "label": "SWI", "shape": "dot", "size": 10}, {"id": "BEA6", "label": "BEA6", "shape": "dot", "size": 10}, {"id": "PEA2", "label": "PEA2", "shape": "dot", "size": 10}, {"id": "LET3", "label": "LET3", "shape": "dot", "size": 10}, {"id": "MAR", "label": "MAR", "shape": "dot", "size": 10}, {"id": "PUM", "label": "PUM", "shape": "dot", "size": 10}, {"id": "MEL", "label": "MEL", "shape": "dot", "size": 10}, {"id": "SHA", "label": "SHA", "shape": "dot", "size": 10}, {"id": "CAB4", "label": "CAB4", "shape": "dot", "size": 10}, {"id": "LAV", "label": "LAV", "shape": "dot", "size": 10}, {"id": "ART", "label": "ART", "shape": "dot", "size": 10}, {"id": "VET", "label": "VET", "shape": "dot", "size": 10}, {"id": "PET2", "label": "PET2", "shape": "dot", "size": 10}, {"id": "BLA", "label": "BLA", "shape": "dot", "size": 10}, {"id": "ALM", "label": "ALM", "shape": "dot", "size": 10}, {"id": "FRU2", "label": "FRU2", "shape": "dot", "size": 10}, {"id": "FRU1", "label": "FRU1", "shape": "dot", "size": 10}, {"id": "RYE1", "label": "RYE1", "shape": "dot", "size": 10}, {"id": "END", "label": "END", "shape": "dot", "size": 10}, {"id": "TAT", "label": "TAT", "shape": "dot", "size": 10}, {"id": "MIZ", "label": "MIZ", "shape": "dot", "size": 10}, {"id": "MUS", "label": "MUS", "shape": "dot", "size": 10}, {"id": "CHI", "label": "CHI", "shape": "dot", "size": 10}, {"id": "COR2", "label": "COR2", "shape": "dot", "size": 10}, {"id": "VIO", "label": "VIO", "shape": "dot", "size": 10}, {"id": "CRE", "label": "CRE", "shape": "dot", "size": 10}, {"id": "FEN", "label": "FEN", "shape": "dot", "size": 10}, {"id": "LET4", "label": "LET4", "shape": "dot", "size": 10}, {"id": "OKR", "label": "OKR", "shape": "dot", "size": 10}, {"id": "PAK", "label": "PAK", "shape": "dot", "size": 10}, {"id": "BLA2", "label": "BLA2", "shape": "dot", "size": 10}, {"id": "BLU", "label": "BLU", "shape": "dot", "size": 10}, {"id": "CRA", "label": "CRA", "shape": "dot", "size": 10}, {"id": "GRA", "label": "GRA", "shape": "dot", "size": 10}, {"id": "WHI", "label": "WHI", "shape": "dot", "size": 10}, {"id": "YAR", "label": "YAR", "shape": "dot", "size": 10}, {"id": "AGE", "label": "AGE", "shape": "dot", "size": 10}, {"id": "POR", "label": "POR", "shape": "dot", "size": 10}, {"id": "DIA", "label": "DIA", "shape": "dot", "size": 10}, {"id": "DAH", "label": "DAH", "shape": "dot", "size": 10}, {"id": "ROS2", "label": "ROS2", "shape": "dot", "size": 10}, {"id": "COS", "label": "COS", "shape": "dot", "size": 10}, {"id": "FEV", "label": "FEV", "shape": "dot", "size": 10}, {"id": "COM", "label": "COM", "shape": "dot", "size": 10}, {"id": "NEC2", "label": "NEC2", "shape": "dot", "size": 10}, {"id": "PER", "label": "PER", "shape": "dot", "size": 10}, {"id": "ECH", "label": "ECH", "shape": "dot", "size": 10}, {"id": "FEN2", "label": "FEN2", "shape": "dot", "size": 10}, {"id": "LEM2", "label": "LEM2", "shape": "dot", "size": 10}, {"id": "SAG3", "label": "SAG3", "shape": "dot", "size": 10}, {"id": "VAL", "label": "VAL", "shape": "dot", "size": 10}, {"id": "OTH4", "label": "OTH4", "shape": "dot", "size": 10}, {"id": "SOY", "label": "SOY", "shape": "dot", "size": 10}, {"id": "FIE", "label": "FIE", "shape": "dot", "size": 10}, {"id": "OAT", "label": "OAT", "shape": "dot", "size": 10}, {"id": "WHE", "label": "WHE", "shape": "dot", "size": 10}, {"id": "RYE2", "label": "RYE2", "shape": "dot", "size": 10}, {"id": "PAN", "label": "PAN", "shape": "dot", "size": 10}, {"id": "BOK", "label": "BOK", "shape": "dot", "size": 10}, {"id": "CAN", "label": "CAN", "shape": "dot", "size": 10}, {"id": "PEP1", "label": "PEP1", "shape": "dot", "size": 10}, {"id": "FRU3", "label": "FRU3", "shape": "dot", "size": 10}, {"id": "NEC1", "label": "NEC1", "shape": "dot", "size": 10}, {"id": "KIW", "label": "KIW", "shape": "dot", "size": 10}, {"id": "MED", "label": "MED", "shape": "dot", "size": 10}, {"id": "HAZ", "label": "HAZ", "shape": "dot", "size": 10}, {"id": "CLO", "label": "CLO", "shape": "dot", "size": 10}, {"id": "WAL", "label": "WAL", "shape": "dot", "size": 10}, {"id": "CHE", "label": "CHE", "shape": "dot", "size": 10}, {"id": "LEM4", "label": "LEM4", "shape": "dot", "size": 10}, {"id": "LEM5", "label": "LEM5", "shape": "dot", "size": 10}, {"id": "LIM", "label": "LIM", "shape": "dot", "size": 10}, {"id": "LIM2", "label": "LIM2", "shape": "dot", "size": 10}, {"id": "FIG", "label": "FIG", "shape": "dot", "size": 10}, {"id": "FIG2", "label": "FIG2", "shape": "dot", "size": 10}, {"id": "POM", "label": "POM", "shape": "dot", "size": 10}, {"id": "COR5", "label": "COR5", "shape": "dot", "size": 10}, {"id": "HON", "label": "HON", "shape": "dot", "size": 10}, {"id": "SNA", "label": "SNA", "shape": "dot", "size": 10}, {"id": "QUI", "label": "QUI", "shape": "dot", "size": 10}, {"id": "TOM3", "label": "TOM3", "shape": "dot", "size": 10}, {"id": "SCO", "label": "SCO", "shape": "dot", "size": 10}, {"id": "ART2", "label": "ART2", "shape": "dot", "size": 10}, {"id": "CEL2", "label": "CEL2", "shape": "dot", "size": 10}, {"id": "KOH", "label": "KOH", "shape": "dot", "size": 10}, {"id": "SPI2", "label": "SPI2", "shape": "dot", "size": 10}, {"id": "SPI3", "label": "SPI3", "shape": "dot", "size": 10}, {"id": "SWE2", "label": "SWE2", "shape": "dot", "size": 10}, {"id": "BAY", "label": "BAY", "shape": "dot", "size": 10}, {"id": "STE", "label": "STE", "shape": "dot", "size": 10}, {"id": "SOR", "label": "SOR", "shape": "dot", "size": 10}, {"id": "JOS", "label": "JOS", "shape": "dot", "size": 10}, {"id": "LOG", "label": "LOG", "shape": "dot", "size": 10}, {"id": "HOP", "label": "HOP", "shape": "dot", "size": 10}, {"id": "ORA", "label": "ORA", "shape": "dot", "size": 10}, {"id": "ORA2", "label": "ORA2", "shape": "dot", "size": 10}, {"id": "AMA", "label": "AMA", "shape": "dot", "size": 10}, {"id": "GIN", "label": "GIN", "shape": "dot", "size": 10}, {"id": "LEM3", "label": "LEM3", "shape": "dot", "size": 10}]);
+        edges = new vis.DataSet([{"from": "AUB", "to": "PEP", "weight": 1}, {"from": "AUB", "to": "MAR2", "weight": 1}, {"from": "AUB", "to": "TAR", "weight": 1}, {"from": "AUB", "to": "CAT", "weight": 1}, {"from": "AUB", "to": "BEA3", "weight": 1}, {"from": "BAS", "to": "LET1", "weight": 1}, {"from": "BAS", "to": "PEP", "weight": 1}, {"from": "BAS", "to": "PUR", "weight": 1}, {"from": "BAS", "to": "TOM1", "weight": 1}, {"from": "BAS", "to": "LET2", "weight": 1}, {"from": "BAS", "to": "TOM2", "weight": 1}, {"from": "BEA1", "to": "", "weight": 1}, {"from": "BEA1", "to": "CAB3", "weight": 1}, {"from": "BEA1", "to": "CAL", "weight": 1}, {"from": "BEA1", "to": "CAR", "weight": 1}, {"from": "BEA1", "to": "NAS", "weight": 1}, {"from": "BEA1", "to": "LOV", "weight": 1}, {"from": "BEA1", "to": "SWE1", "weight": 1}, {"from": "BEA1", "to": "CEL", "weight": 1}, {"from": "BEA1", "to": "POT1", "weight": 1}, {"from": "BEA1", "to": "CAU", "weight": 1}, {"from": "BEA1", "to": "CAB7", "weight": 1}, {"from": "BEA1", "to": "BRU", "weight": 1}, {"from": "BEA1", "to": "BRO", "weight": 1}, {"from": "BEA3", "to": "NAS", "weight": 1}, {"from": "BEA3", "to": "SWE1", "weight": 1}, {"from": "BEA3", "to": "SQU2", "weight": 1}, {"from": "BEA3", "to": "SQU", "weight": 1}, {"from": "BEA3", "to": "SUN", "weight": 1}, {"from": "BEA3", "to": "ROS", "weight": 1}, {"from": "BEA2", "to": "", "weight": 1}, {"from": "BEA2", "to": "POT2", "weight": 1}, {"from": "BEA2", "to": "NAS", "weight": 1}, {"from": "BEA2", "to": "STR", "weight": 1}, {"from": "BEA2", "to": "POT1", "weight": 1}, {"from": "BEA2", "to": "BEE", "weight": 1}, {"from": "BEE", "to": "LET1", "weight": 1}, {"from": "BEE", "to": "CAB1", "weight": 1}, {"from": "BEE", "to": "CAL", "weight": 1}, {"from": "BEE", "to": "ONI5", "weight": 1}, {"from": "BEE", "to": "CAB6", "weight": 1}, {"from": "BEE", "to": "LET2", "weight": 1}, {"from": "BEE", "to": "CAU", "weight": 1}, {"from": "BEE", "to": "ONI4", "weight": 1}, {"from": "BEE", "to": "CAB5", "weight": 1}, {"from": "BEE", "to": "ONI", "weight": 1}, {"from": "BEE", "to": "BRU", "weight": 1}, {"from": "BEE", "to": "CAB2", "weight": 1}, {"from": "BRO", "to": "CAB1", "weight": 1}, {"from": "BRO", "to": "CAL", "weight": 1}, {"from": "BRO", "to": "CAB3", "weight": 1}, {"from": "BRO", "to": "CAU", "weight": 1}, {"from": "BRO", "to": "CAB7", "weight": 1}, {"from": "BRO", "to": "CAB5", "weight": 1}, {"from": "BRO", "to": "ORE", "weight": 1}, {"from": "CEL", "to": "LOV", "weight": 1}, {"from": "CEL", "to": "CHI2", "weight": 1}, {"from": "CEL", "to": "CAL", "weight": 1}, {"from": "CEL", "to": "CAB1", "weight": 1}, {"from": "CEL", "to": "NAS", "weight": 1}, {"from": "CEL", "to": "CAB3", "weight": 1}, {"from": "CEL", "to": "TOM1", "weight": 1}, {"from": "CEL", "to": "CAU", "weight": 1}, {"from": "CEL", "to": "CAB7", "weight": 1}, {"from": "CEL", "to": "TOM2", "weight": 1}, {"from": "CEL", "to": "CAB5", "weight": 1}, {"from": "CEL", "to": "GAR", "weight": 1}, {"from": "PUR", "to": "", "weight": 1}, {"from": "SAL", "to": "CHI2", "weight": 1}, {"from": "BRU", "to": "BUC", "weight": 1}, {"from": "BRU", "to": "ROS", "weight": 1}, {"from": "BRU", "to": "CAR", "weight": 1}, {"from": "BRU", "to": "SAG", "weight": 1}, {"from": "BRU", "to": "NAS", "weight": 1}, {"from": "BRU", "to": "ONI5", "weight": 1}, {"from": "BRU", "to": "MIN", "weight": 1}, {"from": "BRU", "to": "DIL", "weight": 1}, {"from": "BRU", "to": "ONI3", "weight": 1}, {"from": "BRU", "to": "CAL2", "weight": 1}, {"from": "BRU", "to": "POT1", "weight": 1}, {"from": "BRU", "to": "ONI", "weight": 1}, {"from": "BRU", "to": "AGA\u2002", "weight": 1}, {"from": "BRU", "to": "CHA", "weight": 1}, {"from": "CAL", "to": "CAL", "weight": 1}, {"from": "CAL", "to": "CAB1", "weight": 1}, {"from": "CAL", "to": "SAG", "weight": 1}, {"from": "CAL", "to": "NAS", "weight": 1}, {"from": "CAL", "to": "CAB3", "weight": 1}, {"from": "CAL", "to": "MIN", "weight": 1}, {"from": "CAL", "to": "AGA", "weight": 1}, {"from": "CAL", "to": "DIL", "weight": 1}, {"from": "CAL", "to": "CAU", "weight": 1}, {"from": "CAL", "to": "CAB7", "weight": 1}, {"from": "CAL", "to": "CAB5", "weight": 1}, {"from": "CAL", "to": "THY", "weight": 1}, {"from": "CAR", "to": "LET1", "weight": 1}, {"from": "CAR", "to": "SAG", "weight": 1}, {"from": "CAR", "to": "ONI5", "weight": 1}, {"from": "CAR", "to": "TOM1", "weight": 1}, {"from": "CAR", "to": "POT1", "weight": 1}, {"from": "CAR", "to": "LET2", "weight": 1}, {"from": "CAR", "to": "CAB5", "weight": 1}, {"from": "CAR", "to": "MAN", "weight": 1}, {"from": "CAR", "to": "ONI3", "weight": 1}, {"from": "CAR", "to": "CHI3", "weight": 1}, {"from": "CAR", "to": "CHI2", "weight": 1}, {"from": "CAR", "to": "CAB7", "weight": 1}, {"from": "CAR", "to": "LEE", "weight": 1}, {"from": "CAR", "to": "CAB1", "weight": 1}, {"from": "CAR", "to": "CAB3", "weight": 1}, {"from": "CAR", "to": "TOM2", "weight": 1}, {"from": "CAR", "to": "PEA", "weight": 1}, {"from": "CAR", "to": "ONI", "weight": 1}, {"from": "CAR", "to": "ROS", "weight": 1}, {"from": "CAU", "to": "SAG", "weight": 1}, {"from": "CAU", "to": "TOM1", "weight": 1}, {"from": "CAU", "to": "MIN", "weight": 1}, {"from": "CAU", "to": "DIL", "weight": 1}, {"from": "CAU", "to": "TOM2", "weight": 1}, {"from": "CAU", "to": "ORE", "weight": 1}, {"from": "COU", "to": "ZIN", "weight": 1}, {"from": "COU", "to": "NAS", "weight": 1}, {"from": "CUC", "to": "TAN", "weight": 1}, {"from": "CUC", "to": "LET1", "weight": 1}, {"from": "CUC", "to": "", "weight": 1}, {"from": "CUC", "to": "NAS", "weight": 1}, {"from": "CUC", "to": "BOR", "weight": 1}, {"from": "CUC", "to": "DIL", "weight": 1}, {"from": "CUC", "to": "LET2", "weight": 1}, {"from": "CUC", "to": "SUN", "weight": 1}, {"from": "CUC", "to": "RAD", "weight": 1}, {"from": "CUC", "to": "ORE", "weight": 1}, {"from": "GAR", "to": "", "weight": 1}, {"from": "GAR", "to": "PEA6", "weight": 1}, {"from": "GAR", "to": "TOM1", "weight": 1}, {"from": "GAR", "to": "PEA4", "weight": 1}, {"from": "GAR", "to": "PEA9", "weight": 1}, {"from": "GAR", "to": "PLU2", "weight": 1}, {"from": "GAR", "to": "RAS", "weight": 1}, {"from": "GAR", "to": "GOO", "weight": 1}, {"from": "GAR", "to": "CHE2", "weight": 1}, {"from": "GAR", "to": "CHE1", "weight": 1}, {"from": "GAR", "to": "APR1", "weight": 1}, {"from": "GAR", "to": "CHE3", "weight": 1}, {"from": "GAR", "to": "PLU1", "weight": 1}, {"from": "GAR", "to": "PLU3", "weight": 1}, {"from": "GAR", "to": "APR2", "weight": 1}, {"from": "GAR", "to": "APP3", "weight": 1}, {"from": "GAR", "to": "PEA7", "weight": 1}, {"from": "GAR", "to": "PEA5", "weight": 1}, {"from": "GAR", "to": "APP2", "weight": 1}, {"from": "GAR", "to": "APP1", "weight": 1}, {"from": "GAR", "to": "RED", "weight": 1}, {"from": "GAR", "to": "TOM2", "weight": 1}, {"from": "GAR", "to": "PEA8", "weight": 1}, {"from": "GAR", "to": "APP4", "weight": 1}, {"from": "HER", "to": "", "weight": 1}, {"from": "KAL", "to": "TAN", "weight": 1}, {"from": "KAL", "to": "BUC", "weight": 1}, {"from": "KAL", "to": "CAB3", "weight": 1}, {"from": "KAL", "to": "", "weight": 1}, {"from": "KAL", "to": "NAS", "weight": 1}, {"from": "KAL", "to": "MIN", "weight": 1}, {"from": "KAL", "to": "MAR2", "weight": 1}, {"from": "KAL", "to": "DIL", "weight": 1}, {"from": "KAL", "to": "AGA", "weight": 1}, {"from": "KAL", "to": "CAB7", "weight": 1}, {"from": "KAL", "to": "CAT", "weight": 1}, {"from": "KAL", "to": "THY", "weight": 1}, {"from": "KAL", "to": "CHA", "weight": 1}, {"from": "LEE", "to": "STR", "weight": 1}, {"from": "LET1", "to": "CHI2", "weight": 1}, {"from": "LET1", "to": "SPI", "weight": 1}, {"from": "LET1", "to": "CAB3", "weight": 1}, {"from": "LET1", "to": "CAB1", "weight": 1}, {"from": "LET1", "to": "POA", "weight": 1}, {"from": "LET1", "to": "DIL", "weight": 1}, {"from": "LET1", "to": "STR", "weight": 1}, {"from": "LET1", "to": "LET2", "weight": 1}, {"from": "LET1", "to": "CAB7", "weight": 1}, {"from": "LET1", "to": "SPR", "weight": 1}, {"from": "LET1", "to": "ONI4", "weight": 1}, {"from": "LET1", "to": "CAB5", "weight": 1}, {"from": "LET1", "to": "RAD", "weight": 1}, {"from": "LET1", "to": "ONI", "weight": 1}, {"from": "LET2", "to": "", "weight": 1}, {"from": "LET2", "to": "CHI2", "weight": 1}, {"from": "LET2", "to": "SPI", "weight": 1}, {"from": "LET2", "to": "CAB3", "weight": 1}, {"from": "LET2", "to": "CAB1", "weight": 1}, {"from": "LET2", "to": "POA", "weight": 1}, {"from": "LET2", "to": "DIL", "weight": 1}, {"from": "LET2", "to": "STR", "weight": 1}, {"from": "LET2", "to": "SPR", "weight": 1}, {"from": "LET2", "to": "CAB7", "weight": 1}, {"from": "LET2", "to": "ONI4", "weight": 1}, {"from": "LET2", "to": "CAB5", "weight": 1}, {"from": "LET2", "to": "RAD", "weight": 1}, {"from": "LET2", "to": "ONI", "weight": 1}, {"from": "TOM1", "to": "PEP", "weight": 1}, {"from": "TOM1", "to": "MIN", "weight": 1}, {"from": "TOM1", "to": "BOR", "weight": 1}, {"from": "TOM1", "to": "POA", "weight": 1}, {"from": "TOM1", "to": "ONI3", "weight": 1}, {"from": "TOM1", "to": "ASP", "weight": 1}, {"from": "TOM1", "to": "CHI2", "weight": 1}, {"from": "TOM1", "to": "NAS", "weight": 1}, {"from": "TOM1", "to": "MAR2", "weight": 1}, {"from": "TOM1", "to": "MON", "weight": 1}, {"from": "TOM1", "to": "PAR2", "weight": 1}, {"from": "TOM1", "to": "CAL2", "weight": 1}, {"from": "TOM1", "to": "ONI4", "weight": 1}, {"from": "TOM1", "to": "ONI", "weight": 1}, {"from": "ONI", "to": "CAB3", "weight": 1}, {"from": "ONI", "to": "CAB1", "weight": 1}, {"from": "ONI", "to": "STR", "weight": 1}, {"from": "ONI", "to": "SPR", "weight": 1}, {"from": "ONI", "to": "CAB7", "weight": 1}, {"from": "ONI", "to": "TOM2", "weight": 1}, {"from": "ONI", "to": "CAB5", "weight": 1}, {"from": "ONI", "to": "CHA", "weight": 1}, {"from": "OTH1", "to": "", "weight": 1}, {"from": "OTH2", "to": "", "weight": 1}, {"from": "OTH3", "to": "", "weight": 1}, {"from": "PAR", "to": "POT2", "weight": 1}, {"from": "PAR", "to": "ONI3", "weight": 1}, {"from": "PAR", "to": "SPR", "weight": 1}, {"from": "PAR", "to": "ONI4", "weight": 1}, {"from": "PAR", "to": "POT1", "weight": 1}, {"from": "PAR", "to": "RAD", "weight": 1}, {"from": "PEA", "to": "CHI2", "weight": 1}, {"from": "PEA", "to": "TUR", "weight": 1}, {"from": "PEA", "to": "SWE1", "weight": 1}, {"from": "PEA", "to": "MIN", "weight": 1}, {"from": "PEA", "to": "ALY", "weight": 1}, {"from": "PEA", "to": "RAD", "weight": 1}, {"from": "PEP", "to": "MAJ", "weight": 1}, {"from": "PEP", "to": "TOM2", "weight": 1}, {"from": "PEP", "to": "ORE", "weight": 1}, {"from": "POT1", "to": "", "weight": 1}, {"from": "POT1", "to": "SAG", "weight": 1}, {"from": "POT1", "to": "SQU2", "weight": 1}, {"from": "POT1", "to": "MAR2", "weight": 1}, {"from": "POT1", "to": "COR3", "weight": 1}, {"from": "POT1", "to": "SQU", "weight": 1}, {"from": "POT1", "to": "HOR", "weight": 1}, {"from": "POT2", "to": "SQU2", "weight": 1}, {"from": "POT2", "to": "MAR2", "weight": 1}, {"from": "POT2", "to": "COR3", "weight": 1}, {"from": "POT2", "to": "SQU", "weight": 1}, {"from": "POT2", "to": "HOR", "weight": 1}, {"from": "RAD", "to": "", "weight": 1}, {"from": "RAD", "to": "NAS", "weight": 1}, {"from": "RAD", "to": "MAN", "weight": 1}, {"from": "RHU", "to": "STR", "weight": 1}, {"from": "ROC", "to": "NAS", "weight": 1}, {"from": "ROC", "to": "MIN", "weight": 1}, {"from": "ROC", "to": "DIL", "weight": 1}, {"from": "ROC", "to": "THY", "weight": 1}, {"from": "SPI", "to": "CAB1", "weight": 1}, {"from": "SPI", "to": "CAB3", "weight": 1}, {"from": "SPI", "to": "STR", "weight": 1}, {"from": "SPI", "to": "CAB7", "weight": 1}, {"from": "SPI", "to": "CAB5", "weight": 1}, {"from": "SQU", "to": "NAS", "weight": 1}, {"from": "SQU", "to": "SWE1", "weight": 1}, {"from": "SQU", "to": "MAR2", "weight": 1}, {"from": "SQU", "to": "LEM", "weight": 1}, {"from": "STR", "to": "BOR", "weight": 1}, {"from": "STR", "to": "ONI3", "weight": 1}, {"from": "STR", "to": "ONI4", "weight": 1}, {"from": "STR", "to": "NIG", "weight": 1}, {"from": "STR", "to": "THY", "weight": 1}, {"from": "SWE", "to": "ONI4", "weight": 1}, {"from": "SWE", "to": "MAN", "weight": 1}, {"from": "SWI", "to": "", "weight": 1}, {"from": "SWI", "to": "CAB1", "weight": 1}, {"from": "SWI", "to": "CAB3", "weight": 1}, {"from": "SWI", "to": "CAB7", "weight": 1}, {"from": "SWI", "to": "ONI4", "weight": 1}, {"from": "SWI", "to": "CAB5", "weight": 1}, {"from": "SWI", "to": "BEA6", "weight": 1}, {"from": "TOM2", "to": "NAS", "weight": 1}, {"from": "TOM2", "to": "BOR", "weight": 1}, {"from": "TOM2", "to": "CHI2", "weight": 1}, {"from": "TOM2", "to": "ONI3", "weight": 1}, {"from": "TOM2", "to": "ASP", "weight": 1}, {"from": "TOM2", "to": "CAL2", "weight": 1}, {"from": "TOM2", "to": "MON", "weight": 1}, {"from": "TOM2", "to": "ONI4", "weight": 1}, {"from": "TUR", "to": "PEA2", "weight": 1}, {"from": "TUR", "to": "LET3", "weight": 1}, {"from": "CAB1", "to": "TAN", "weight": 1}, {"from": "CAB1", "to": "ROS", "weight": 1}, {"from": "CAB1", "to": "SAG", "weight": 1}, {"from": "CAB1", "to": "NAS", "weight": 1}, {"from": "CAB1", "to": "MIN", "weight": 1}, {"from": "CAB1", "to": "DIL", "weight": 1}, {"from": "CAB1", "to": "AGA", "weight": 1}, {"from": "CAB1", "to": "CAT", "weight": 1}, {"from": "CAB1", "to": "THY", "weight": 1}, {"from": "CAB1", "to": "CHA", "weight": 1}, {"from": "CAB2", "to": "SAG", "weight": 1}, {"from": "CAB2", "to": "NAS", "weight": 1}, {"from": "CAB2", "to": "MIN", "weight": 1}, {"from": "CAB2", "to": "MAR2", "weight": 1}, {"from": "CAB2", "to": "ONI3", "weight": 1}, {"from": "CAB2", "to": "THY", "weight": 1}, {"from": "MAR", "to": "NAS", "weight": 1}, {"from": "MAN", "to": "CHI2", "weight": 1}, {"from": "MAN", "to": "SWE1", "weight": 1}, {"from": "MAN", "to": "MIN", "weight": 1}, {"from": "MAN", "to": "ALY", "weight": 1}, {"from": "PUM", "to": "SWE1", "weight": 1}, {"from": "PUM", "to": "MON", "weight": 1}, {"from": "PUM", "to": "MEL", "weight": 1}, {"from": "PUM", "to": "LEM", "weight": 1}, {"from": "PUM", "to": "ORE", "weight": 1}, {"from": "SWE1", "to": "", "weight": 1}, {"from": "SWE1", "to": "SQU2", "weight": 1}, {"from": "SWE1", "to": "MAR2", "weight": 1}, {"from": "SWE1", "to": "DIL", "weight": 1}, {"from": "SWE1", "to": "SUN", "weight": 1}, {"from": "SWE1", "to": "MEL", "weight": 1}, {"from": "SHA", "to": "CAB4", "weight": 1}, {"from": "SHA", "to": "CAB6", "weight": 1}, {"from": "SHA", "to": "CHA", "weight": 1}, {"from": "APP1", "to": "CHI2", "weight": 1}, {"from": "APP1", "to": "NAS", "weight": 1}, {"from": "APP1", "to": "ONI3", "weight": 1}, {"from": "APP1", "to": "LAV", "weight": 1}, {"from": "APP2", "to": "CHI2", "weight": 1}, {"from": "APP2", "to": "NAS", "weight": 1}, {"from": "APP2", "to": "ONI3", "weight": 1}, {"from": "APP2", "to": "LAV", "weight": 1}, {"from": "ART", "to": "VET", "weight": 1}, {"from": "ASP", "to": "MAR2", "weight": 1}, {"from": "ASP", "to": "CAL2", "weight": 1}, {"from": "ASP", "to": "PET2", "weight": 1}, {"from": "BLA", "to": "PEA5", "weight": 1}, {"from": "BLA", "to": "ALM", "weight": 1}, {"from": "BLA", "to": "CHE1", "weight": 1}, {"from": "FRU2", "to": "", "weight": 1}, {"from": "FRU1", "to": "", "weight": 1}, {"from": "RAS", "to": "RYE1", "weight": 1}, {"from": "SPR", "to": "CAB3", "weight": 1}, {"from": "SPR", "to": "CAB7", "weight": 1}, {"from": "SPR", "to": "CAB5", "weight": 1}, {"from": "BEA6", "to": "ROS", "weight": 1}, {"from": "CAB3", "to": "", "weight": 1}, {"from": "CAB3", "to": "ROS", "weight": 1}, {"from": "CAB3", "to": "TAN", "weight": 1}, {"from": "CAB3", "to": "SAG", "weight": 1}, {"from": "CAB3", "to": "NAS", "weight": 1}, {"from": "CAB3", "to": "MIN", "weight": 1}, {"from": "CAB3", "to": "DIL", "weight": 1}, {"from": "CAB3", "to": "AGA", "weight": 1}, {"from": "CAB3", "to": "CAT", "weight": 1}, {"from": "CAB3", "to": "THY", "weight": 1}, {"from": "CAB3", "to": "CHA", "weight": 1}, {"from": "CAB4", "to": "SAG", "weight": 1}, {"from": "CAB4", "to": "NAS", "weight": 1}, {"from": "CAB4", "to": "END", "weight": 1}, {"from": "CAB4", "to": "MIN", "weight": 1}, {"from": "CAB4", "to": "DIL", "weight": 1}, {"from": "CAB4", "to": "TAT", "weight": 1}, {"from": "CAB4", "to": "MIZ", "weight": 1}, {"from": "CAB4", "to": "MUS", "weight": 1}, {"from": "CHI", "to": "TAT", "weight": 1}, {"from": "CHI", "to": "END", "weight": 1}, {"from": "CHI", "to": "MIZ", "weight": 1}, {"from": "CHI", "to": "MUS", "weight": 1}, {"from": "COR2", "to": "VIO", "weight": 1}, {"from": "COR2", "to": "CAB6", "weight": 1}, {"from": "CRE", "to": "MIN", "weight": 1}, {"from": "CRE", "to": "CHI2", "weight": 1}, {"from": "END", "to": "TAT", "weight": 1}, {"from": "END", "to": "MIZ", "weight": 1}, {"from": "END", "to": "MUS", "weight": 1}, {"from": "FEN", "to": "MIN", "weight": 1}, {"from": "FEN", "to": "", "weight": 1}, {"from": "LET3", "to": "VIO", "weight": 1}, {"from": "LET3", "to": "CAB6", "weight": 1}, {"from": "LET4", "to": "", "weight": 1}, {"from": "MEL", "to": "NAS", "weight": 1}, {"from": "MEL", "to": "SQU2", "weight": 1}, {"from": "MEL", "to": "MAR2", "weight": 1}, {"from": "MEL", "to": "ORE", "weight": 1}, {"from": "MIZ", "to": "NAS", "weight": 1}, {"from": "MIZ", "to": "MIN", "weight": 1}, {"from": "MIZ", "to": "DIL", "weight": 1}, {"from": "MIZ", "to": "TAT", "weight": 1}, {"from": "MIZ", "to": "MUS", "weight": 1}, {"from": "OKR", "to": "SUN", "weight": 1}, {"from": "PAK", "to": "SAG", "weight": 1}, {"from": "PAK", "to": "NAS", "weight": 1}, {"from": "PAK", "to": "MIN", "weight": 1}, {"from": "PAK", "to": "DIL", "weight": 1}, {"from": "PAK", "to": "TAT", "weight": 1}, {"from": "PAK", "to": "MUS", "weight": 1}, {"from": "SQU2", "to": "NAS", "weight": 1}, {"from": "SQU2", "to": "BOR", "weight": 1}, {"from": "SQU2", "to": "MAR2", "weight": 1}, {"from": "SQU2", "to": "LEM", "weight": 1}, {"from": "SQU2", "to": "ORE", "weight": 1}, {"from": "BLA2", "to": "", "weight": 1}, {"from": "BLA2", "to": "MAR2", "weight": 1}, {"from": "BLU", "to": "CRA", "weight": 1}, {"from": "GRA", "to": "AGA", "weight": 1}, {"from": "GRA", "to": "CHI2", "weight": 1}, {"from": "GRA", "to": "CHI3", "weight": 1}, {"from": "GOO", "to": "TAN", "weight": 1}, {"from": "GOO", "to": "", "weight": 1}, {"from": "GOO", "to": "MAR2", "weight": 1}, {"from": "RED", "to": "", "weight": 1}, {"from": "RED", "to": "MAR2", "weight": 1}, {"from": "WHI", "to": "", "weight": 1}, {"from": "WHI", "to": "MAR2", "weight": 1}, {"from": "CHI2", "to": "", "weight": 1}, {"from": "CHI2", "to": "ONI3", "weight": 1}, {"from": "CHI2", "to": "APP3", "weight": 1}, {"from": "CHI2", "to": "APP4", "weight": 1}, {"from": "COR3", "to": "TAN", "weight": 1}, {"from": "COR3", "to": "MIN", "weight": 1}, {"from": "COR3", "to": "YAR", "weight": 1}, {"from": "DIL", "to": "ZIN", "weight": 1}, {"from": "MAJ", "to": "THY", "weight": 1}, {"from": "MAJ", "to": "ORE", "weight": 1}, {"from": "MIN", "to": "", "weight": 1}, {"from": "MIN", "to": "AGA", "weight": 1}, {"from": "MIN", "to": "CAB7", "weight": 1}, {"from": "MIN", "to": "LAV", "weight": 1}, {"from": "MIN", "to": "CAB5", "weight": 1}, {"from": "PAR2", "to": "", "weight": 1}, {"from": "ROS", "to": "SAG", "weight": 1}, {"from": "ROS", "to": "CAB7", "weight": 1}, {"from": "ROS", "to": "CAB5", "weight": 1}, {"from": "SAG", "to": "CAB7", "weight": 1}, {"from": "SAG", "to": "CAB5", "weight": 1}, {"from": "THY", "to": "", "weight": 1}, {"from": "THY", "to": "AGE", "weight": 1}, {"from": "THY", "to": "CAB7", "weight": 1}, {"from": "THY", "to": "POR", "weight": 1}, {"from": "THY", "to": "DIA", "weight": 1}, {"from": "THY", "to": "CAB5", "weight": 1}, {"from": "THY", "to": "DAH", "weight": 1}, {"from": "CAL2", "to": "", "weight": 1}, {"from": "CAT", "to": "ROS2", "weight": 1}, {"from": "CAT", "to": "MON", "weight": 1}, {"from": "CAT", "to": "YAR", "weight": 1}, {"from": "CAT", "to": "COS", "weight": 1}, {"from": "CHA", "to": "", "weight": 1}, {"from": "CHA", "to": "ONI4", "weight": 1}, {"from": "CHA", "to": "CAB7", "weight": 1}, {"from": "CHA", "to": "FEV", "weight": 1}, {"from": "CHA", "to": "CAB5", "weight": 1}, {"from": "COM", "to": "", "weight": 1}, {"from": "COM", "to": "PEA5", "weight": 1}, {"from": "COM", "to": "APR2", "weight": 1}, {"from": "COM", "to": "NEC2", "weight": 1}, {"from": "COM", "to": "PEA9", "weight": 1}, {"from": "COM", "to": "PER", "weight": 1}, {"from": "COM", "to": "PLU2", "weight": 1}, {"from": "ECH", "to": "MON", "weight": 1}, {"from": "FEN2", "to": "COS", "weight": 1}, {"from": "CHI3", "to": "APP3", "weight": 1}, {"from": "CHI3", "to": "ROS2", "weight": 1}, {"from": "CHI3", "to": "APP4", "weight": 1}, {"from": "HOR", "to": "", "weight": 1}, {"from": "LAV", "to": "", "weight": 1}, {"from": "LAV", "to": "CHE2", "weight": 1}, {"from": "LAV", "to": "PEA5", "weight": 1}, {"from": "LAV", "to": "AGA", "weight": 1}, {"from": "LAV", "to": "ROS2", "weight": 1}, {"from": "LAV", "to": "APP3", "weight": 1}, {"from": "LAV", "to": "PEA9", "weight": 1}, {"from": "LAV", "to": "PEA8", "weight": 1}, {"from": "LAV", "to": "PLU2", "weight": 1}, {"from": "LAV", "to": "APP4", "weight": 1}, {"from": "LEM2", "to": "MON", "weight": 1}, {"from": "LEM2", "to": "SAG3", "weight": 1}, {"from": "MON", "to": "", "weight": 1}, {"from": "MON", "to": "COS", "weight": 1}, {"from": "VAL", "to": "", "weight": 1}, {"from": "VAL", "to": "AGA", "weight": 1}, {"from": "ONI4", "to": "CAB7", "weight": 1}, {"from": "ONI4", "to": "CAB5", "weight": 1}, {"from": "ONI5", "to": "CAB6", "weight": 1}, {"from": "CAB5", "to": "TAN", "weight": 1}, {"from": "CAB5", "to": "NAS", "weight": 1}, {"from": "CAB5", "to": "AGA", "weight": 1}, {"from": "CAB6", "to": "", "weight": 1}, {"from": "CAB7", "to": "TAN", "weight": 1}, {"from": "CAB7", "to": "NAS", "weight": 1}, {"from": "CAB7", "to": "AGA", "weight": 1}, {"from": "OTH4", "to": "", "weight": 1}, {"from": "MUS", "to": "", "weight": 1}, {"from": "MUS", "to": "PLU2", "weight": 1}, {"from": "SOY", "to": "MAR2", "weight": 1}, {"from": "FIE", "to": "OAT", "weight": 1}, {"from": "FIE", "to": "WHE", "weight": 1}, {"from": "FIE", "to": "RYE2", "weight": 1}, {"from": "PEA2", "to": "OAT", "weight": 1}, {"from": "PEA2", "to": "WHE", "weight": 1}, {"from": "PEA2", "to": "RYE2", "weight": 1}, {"from": "TAT", "to": "", "weight": 1}, {"from": "TAT", "to": "PAN", "weight": 1}, {"from": "BOK", "to": "VIO", "weight": 1}, {"from": "CAN", "to": "TAN", "weight": 1}, {"from": "CAN", "to": "NAS", "weight": 1}, {"from": "PEP1", "to": "", "weight": 1}, {"from": "FRU3", "to": "", "weight": 1}, {"from": "APP3", "to": "NAS", "weight": 1}, {"from": "APP4", "to": "NAS", "weight": 1}, {"from": "PEA5", "to": "BUC", "weight": 1}, {"from": "PEA5", "to": "", "weight": 1}, {"from": "PEA5", "to": "OAT", "weight": 1}, {"from": "PEA5", "to": "RYE1", "weight": 1}, {"from": "PLU1", "to": "MAR2", "weight": 1}, {"from": "PLU2", "to": "MAR2", "weight": 1}, {"from": "PLU3", "to": "MAR2", "weight": 1}, {"from": "CHE1", "to": "TAN", "weight": 1}, {"from": "CHE1", "to": "NAS", "weight": 1}, {"from": "CHE1", "to": "MAR2", "weight": 1}, {"from": "CHE2", "to": "TAN", "weight": 1}, {"from": "CHE2", "to": "NAS", "weight": 1}, {"from": "CHE2", "to": "MAR2", "weight": 1}, {"from": "CHE3", "to": "TAN", "weight": 1}, {"from": "CHE3", "to": "NAS", "weight": 1}, {"from": "CHE3", "to": "MAR2", "weight": 1}, {"from": "NEC1", "to": "MAR2", "weight": 1}, {"from": "NEC2", "to": "MAR2", "weight": 1}, {"from": "APR1", "to": "TAN", "weight": 1}, {"from": "APR2", "to": "TAN", "weight": 1}, {"from": "KIW", "to": "MAR2", "weight": 1}, {"from": "MED", "to": "", "weight": 1}, {"from": "ALM", "to": "TAN", "weight": 1}, {"from": "HAZ", "to": "CLO", "weight": 1}, {"from": "WAL", "to": "PER", "weight": 1}, {"from": "CHE", "to": "", "weight": 1}, {"from": "LEM4", "to": "MAR2", "weight": 1}, {"from": "LEM4", "to": "COS", "weight": 1}, {"from": "LEM5", "to": "MAR2", "weight": 1}, {"from": "LIM", "to": "MAR2", "weight": 1}, {"from": "LIM", "to": "COS", "weight": 1}, {"from": "LIM2", "to": "MAR2", "weight": 1}, {"from": "FIG", "to": "MAR2", "weight": 1}, {"from": "FIG2", "to": "MAR2", "weight": 1}, {"from": "POM", "to": "NAS", "weight": 1}, {"from": "POM", "to": "ZIN", "weight": 1}, {"from": "POM", "to": "SUN", "weight": 1}, {"from": "POM", "to": "COR5", "weight": 1}, {"from": "POM", "to": "COS", "weight": 1}, {"from": "HON", "to": "AGA", "weight": 1}, {"from": "HON", "to": "POA", "weight": 1}, {"from": "HON", "to": "SNA", "weight": 1}, {"from": "QUI", "to": "", "weight": 1}, {"from": "TOM3", "to": "SUN", "weight": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": true
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+        // if this network requires displaying the configure window,
+        // put it in its div
+        options.configure["container"] = document.getElementById("config");
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
